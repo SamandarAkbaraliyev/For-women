@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from rest_framework.authtoken.views import obtain_auth_token
 from users.views import user_detail_view, user_redirect_view, user_update_view
 
@@ -8,5 +8,5 @@ urlpatterns = [
     path("~update/", view=user_update_view, name="update"),
     path("<str:username>/", view=user_detail_view, name="detail"),
 
-    path("login/", obtain_auth_token, name='login')
+    path('api/allauth/', include('allauth.urls')),
 ]

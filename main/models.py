@@ -10,14 +10,14 @@ class BaseModel(models.Model):
 class Category(BaseModel):
     name = models.CharField(max_length=55)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.name
 
 
 class Tag(BaseModel):
     name = models.CharField(max_length=55)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.name
 
 
