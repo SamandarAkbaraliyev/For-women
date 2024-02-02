@@ -18,22 +18,28 @@ class Course(BaseModel):
     title = models.CharField(max_length=55)
     content = models.TextField()
 
-    thumbnail = models.FileField(upload_to='courses/', null=True, blank=True)
+    thumbnail = models.FileField(upload_to='courses/', null=True, blank=True, default='thumbnail/download')
     price = models.PositiveIntegerField(null=True)
     price_discount = models.PositiveIntegerField(null=True, blank=True)
 
     language = models.CharField(max_length=10, choices=Language.choices, default=Language.UZ)
     buy_user = models.ManyToManyField(User, related_name='buy_course', blank=True)
 
+    def __str__(self):
+        return self.title
+
 
 class Comment(BaseModel):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     parent_comment = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
-    course_of_comment = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='comments')
+    course_of_comment = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='comments', null=True)
 
     def __str__(self):
-        return self.content
+        return f"{self.author}'s comment"
+
+    def get_comments(self):
+        return Comment.objects.filter(parent_comment=self).filter(active=True)
 
 
 class Lesson(BaseModel):
@@ -53,8 +59,9 @@ class Lesson(BaseModel):
 
 class LessonUser(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    lesson_us = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    lesson_us = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='lesson_user')
     time_watched = models.IntegerField(default=0)
+    paused_time = models.IntegerField(default=0)
     totel_time = models.IntegerField(default=0, blank=True)
 
     def __str__(self):
